@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/iagoholekdev/blockchain/domains/models"
+	"github.com/iagoholekdev/blockchain-go/domains/models"
 )
 
 func CalculateHash(b models.Block) string {

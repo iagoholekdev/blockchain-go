@@ -1,21 +1,31 @@
-package blockchain
+package main
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/blockhain/domains/models"
-	service "github.com/blockhain/domains/service"
+	"github.com/iagoholekdev/blockchain-go/domains/models"
+	"github.com/iagoholekdev/blockchain-go/domains/service"
 )
 
 func main() {
-	genesisBlock := models.Block{}
-	genesisBlock = models.Block{0, time.Now().String(), "Genesis Block", "", ""}
-	genesisBlock.Hash = service.CalculateHash(genesisBlock)
-	fmt.Println(genesisBlock)
+	trLocal := service.NewLocalTransport("LOCAL")
+	trRemote := service.NewLocalTransport("REMOTE")
 
-	secondBlock, _ := service.GenerateBlock(genesisBlock, "Second Block Data")
-	fmt.Println(secondBlock)
+	trLocal.Connect(trRemote)
+	trRemote.Connect(trLocal)
 
-	fmt.Println(service.isBlockValid(secondBlock, genesisBlock))
+	go func() {
+		for {
+			trRemote.SendMessage(trLocal.Addr(), []byte("Hello world"))
+			time.Sleep(1 * time.Second)
+		}
+
+	}()
+
+	opts := models.ServerOpts{
+		Transports: []models.Transport{trLocal},
+	}
+
+	s := models.NewServer(opts)
+	s.Start()
 }
