@@ -1,9 +1,16 @@
 package models
 
+import "github.com/iagoholekdev/blockchain-go/domains/types"
+
+type Header struct {
+	Version   uint32
+	PrevBlock types.Hash
+	TimeStamp uint64
+	Height    uint32
+	Nonce     uint64
+}
+
 type Block struct {
-	Index        int    `json:"index"`
-	Timestamp    string `json:"timeStamp"`
-	Data         string `json:"data"`
-	PreviousHash string `json:"previousHash"`
-	Hash         string `json:"hash"`
+	Header
+	Transactions []Transaction
 }
